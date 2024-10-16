@@ -1,0 +1,310 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{bussproofs}
+\usepackage{authblk}
+\usepackage[leter,top=2.5cm,bottom=2.5cm,left=2cm,right=2cm]{geometry}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{tikz}
+
+
+%% Title
+\title{
+	\vspace{-0.7in} 	
+	\usefont{OT1}{bch}{b}{n}
+	\begin{minipage}{3cm}
+    \vspace{-0.5in} 	
+	\begin{center}
+	\end{center}
+    \end{minipage}\hfill
+    \begin{minipage}{10.7cm}
+    \begin{center}
+    \normalfont \normalsize \textsc{UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO \\ FACULTAD DE CIENCIAS \\ LENGUAJES DE PROGRAMACIÓN} \\
+		\huge Semanal 07
+    \end{center}
+    \end{minipage}\hfill
+    \begin{minipage}{3.2cm}
+    \vspace{-0.5in} 
+	\begin{center}
+	\end{center}
+    \end{minipage}
+}
+\author{Salazar Gonzalez Pedro Yamil 306037445}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Ejercicio 1 }
+La expresión original define una función recursiva \texttt{sum} que calcula la suma de los \( n \) primeros números:
+
+\begin{lstlisting}
+(let (sum (lambda (n) (if0 n 0 (+ n (sum (- n 1)))))) 
+   (sum 5))
+\end{lstlisting}
+
+\begin{enumerate}
+    \item \textbf{Inicio de la evaluación de \texttt{let}}:
+    \begin{itemize}
+        \item Definimos \texttt{sum} como una función lambda que toma un argumento \(n\).
+        \item La función \texttt{sum} tiene la siguiente forma:
+        \begin{lstlisting}
+        (lambda (n) (if0 n 0 (+ n (sum (- n 1)))))
+        \end{lstlisting}
+    \end{itemize}
+    
+    \item \textbf{Primera llamada a \texttt{sum 5}}:
+    \begin{itemize}
+        \item Evaluamos \texttt{(sum 5)}.
+        \item Sustituimos \(n = 5\) en la función \texttt{sum}:
+        \begin{lstlisting}
+        (if0 5 0 (+ 5 (sum (- 5 1))))
+        \end{lstlisting}
+        \item Dado que \(5 \neq 0\), evaluamos la parte de la suma: \texttt{(+ 5 (sum 4))}.
+    \end{itemize}
+    
+    \item \textbf{Evaluación de \texttt{sum 4}}:
+    \begin{itemize}
+        \item Evaluamos \texttt{(sum 4)}.
+        \item Sustituimos \(n = 4\) en la función \texttt{sum}:
+        \begin{lstlisting}
+        (if0 4 0 (+ 4 (sum (- 4 1))))
+        \end{lstlisting}
+        \item Dado que \(4 \neq 0\), evaluamos \texttt{(+ 4 (sum 3))}.
+    \end{itemize}
+    
+    \item \textbf{Evaluación de \texttt{sum 3}}:
+    \begin{itemize}
+        \item Evaluamos \texttt{(sum 3)}.
+        \item Sustituimos \(n = 3\) en la función \texttt{sum}:
+        \begin{lstlisting}
+        (if0 3 0 (+ 3 (sum (- 3 1))))
+        \end{lstlisting}
+        \item Dado que \(3 \neq 0\), evaluamos \texttt{(+ 3 (sum 2))}.
+    \end{itemize}
+    
+    \item \textbf{Evaluación de \texttt{sum 2}}:
+    \begin{itemize}
+        \item Evaluamos \texttt{(sum 2)}.
+        \item Sustituimos \(n = 2\) en la función \texttt{sum}:
+        \begin{lstlisting}
+        (if0 2 0 (+ 2 (sum (- 2 1))))
+        \end{lstlisting}
+        \item Dado que \(2 \neq 0\), evaluamos \texttt{(+ 2 (sum 1))}.
+    \end{itemize}
+    
+    \item \textbf{Evaluación de \texttt{sum 1}}:
+    \begin{itemize}
+        \item Evaluamos \texttt{(sum 1)}.
+        \item Sustituimos \(n = 1\) en la función \texttt{sum}:
+        \begin{lstlisting}
+        (if0 1 0 (+ 1 (sum (- 1 1))))
+        \end{lstlisting}
+        \item Dado que \(1 \neq 0\), evaluamos \texttt{(+ 1 (sum 0))}.
+    \end{itemize}
+    
+    \item \textbf{Evaluación de \texttt{sum 0}}:
+    \begin{itemize}
+        \item Evaluamos \texttt{(sum 0)}.
+        \item Sustituimos \(n = 0\) en la función \texttt{sum}:
+        \begin{lstlisting}
+        (if0 0 0 (+ 0 (sum (- 0 1))))
+        \end{lstlisting}
+        \item Dado que \(0 = 0\), devolvemos 0.
+    \end{itemize}
+
+    con esto tendríamos una expresión (+ 5 ( + 4 ( + 3 ( + 2 ( +1 0)))))
+    
+    \item \textbf{Volviendo hacia atrás en las llamadas recursivas}:
+    \begin{itemize}
+        \item \texttt{sum 1} devuelve \(1 + 0 = 1\).
+        \item \texttt{sum 2} devuelve \(2 + 1 = 3\).
+        \item \texttt{sum 3} devuelve \(3 + 3 = 6\).
+        \item \texttt{sum 4} devuelve \(4 + 6 = 10\).
+        \item \texttt{sum 5} devuelve \(5 + 10 = 15\).
+    \end{itemize}
+\end{enumerate}
+
+Por lo tanto, el resultado de la suma es \( 15 \).
+
+A continuación, se muestra la expresión modificada usando el combinador de punto fijo \( Y \):
+tenemos que:
+
+\begin{lstlisting}
+(let ( Y ( lambda ( f ) (( lambda ( x ) ( f ( x x ))) ( lambda ( x ) ( f ( x x ))))))
+    ( let ( sum ( Y ( lambda ( sum ) ( lambda ( n ) ( if0 n 0 (+ n ( sum (- n 1))))))))
+        ( sum 5) )
+\end{lstlisting}
+
+El combinador \( Y \) nos permite definir funciones recursivas sin necesidad de hacer referencia directa a su nombre. Aquí:
+
+\begin{itemize}
+    \item \( Y \) toma una función \( f \) y devuelve una versión recursiva de \( f \).
+    \item La función \( sum \) ahora se define en términos de un parámetro \( sum\), que es la referencia recursiva proporcionada por \( Y \).
+\end{itemize}
+
+El cálculo de \texttt{(sum 5)} sigue la misma lógica recursiva, y el resultado sigue siendo \( 15 \).
+
+\section{Ejercicio 2}
+
+La expresión es la siguiente:
+
+\begin{lstlisting}
+(define c #f)
+(+ 1 (+ 2 (+ 3 (+ (let/cc k (set! c k) 4) 5))))
+(c 10)
+\end{lstlisting}
+
+La primera línea:
+\begin{lstlisting}
+(define c #f)
+\end{lstlisting}
+simplemente define la variable \texttt{c} con el valor inicial \texttt{\#f}. Esto no tiene efecto inmediato en el resto de la evaluación.
+
+La segunda parte de la expresión es una serie de sumas anidadas que contienen una llamada a \texttt{let/cc} para capturar una continuación. La expresión es:
+\begin{lstlisting}
+(+ 1 (+ 2 (+ 3 (+ (let/cc k (set! c k) 4) 5))))
+\end{lstlisting}
+
+Al llegar a \texttt{(let/cc k ...)}, la continuación capturada es lo que sigue después de la llamada, es decir, la evaluación de:
+\[
+(+ 4 5)
+\]
+Esta continuación es asignada a la variable \texttt{c} mediante \texttt{(set! c k)}. Después de capturar la continuación, la expresión retorna 4, por lo que el resto de la expresión se convierte en:
+\[
+(+ 1 (+ 2 (+ 3 (+ 4 5))))
+\]
+
+Continuamos evaluando las sumas:
+\begin{align*}
+(+\ 4 \ 5) &\rightarrow 9 \\
+(+\ 3 \ 9) &\rightarrow 12 \\
+(+\ 2 \ 12) &\rightarrow 14 \\
+(+\ 1 \ 14) &\rightarrow 15
+\end{align*}
+
+Por lo tanto, la evaluación completa de esta expresión da como resultado \textbf{15}.
+
+
+Ahora se invoca la continuación capturada almacenada en \texttt{c} con el valor 10:
+\begin{lstlisting}
+(c 10)
+\end{lstlisting}
+Dado que \texttt{c} es la continuación capturada que se evalúa como \texttt{(+ 4 5)}, al invocar \texttt{(c 10)} reemplazamos la subexpresión capturada \texttt{(let/cc k ...)} por 10. La continuación es entonces:
+\[
+(+ 1 (+ 2 (+ 3 (+ 10 5))))
+\]
+
+Ahora evaluamos la nueva expresión:
+\begin{align*}
+(+\ 10\ 5) &\rightarrow 15 \\
+(+\ 3\ 15) &\rightarrow 18 \\
+(+\ 2\ 18) &\rightarrow 20 \\
+(+\ 1\ 20) &\rightarrow 21
+\end{align*}
+
+El resultado final de invocar la continuación es \textbf{21}.
+
+La continuación capturada por \texttt{let/cc k} es la parte de la expresión que aún queda por evaluarse al momento de la captura. En notación \( \lambda^\uparrow \), la continuación es:
+\[
+k = \lambda^\uparrow v. (+ 1 (+ 2 (+ 3 (+ v 5))))
+\]
+Esto significa que, cuando se invoca \texttt{c} con algún valor \( v \), se reemplaza la expresión capturada (la que sigue después de \texttt{let/cc}) por el valor \( v \), reanudando la evaluación desde ese punto.
+
+El uso de continuaciones con \texttt{let/cc} en Racket permite capturar el estado de la ejecución en un punto dado y reanudarla con un nuevo valor. En este caso, la evaluación inicial da como resultado \textbf{15}, mientras que al invocar la continuación con \texttt{(c 10)}, la evaluación continúa desde el punto capturado, resultando en \textbf{21}.
+
+\section{Ejercicio 3}
+\subsection{Ejercicio 1: Definición de la función \texttt{ocurrenciasElementos}}
+La función \texttt{ocurrenciasElementos} toma dos listas como argumentos y devuelve una lista de pares, donde cada par contiene un elemento de la segunda lista y el número de veces que aparece dicho elemento en la primera lista.
+
+\begin{lstlisting}
+-- Función auxiliar para contar las ocurrencias de un elemento en una lista
+contarOcurrencias :: Eq a => a -> [a] -> Int
+contarOcurrencias x [] = 0
+contarOcurrencias x (y:ys) 
+  | x == y    = 1 + contarOcurrencias x ys
+  | otherwise = contarOcurrencias x ys
+
+-- Función principal
+ocurrenciasElementos :: Eq a => [a] -> [a] -> [(a, Int)]
+ocurrenciasElementos _ [] = []
+ocurrenciasElementos lista (x:xs) = (x, contarOcurrencias x lista) : ocurrenciasElementos lista xs
+\end{lstlisting}
+
+Por ejemplo, al ejecutar:
+
+\begin{lstlisting}
+-- Ejemplo de uso:
+-- ocurrenciasElementos [1,3,6,2,4,7,3,9,7] [5,2,3]
+-- [(5,0),(2,1),(3,2)]
+\end{lstlisting}
+
+\subsection{Ejercicio 2: Registros de activación generados}
+
+Vamos a mostrar los registros de activación generados para la llamada \texttt{ocurrenciasElementos [1,2,3] [1,2]}.
+
+\begin{itemize}
+  \item \texttt{ocurrenciasElementos [1,2,3] [1,2]}
+  \item Se llama a \texttt{contarOcurrencias 1 [1,2,3]}:
+    \begin{itemize}
+      \item \texttt{contarOcurrencias 1 [1,2,3]} $\rightarrow 1 +$ \texttt{contarOcurrencias 1 [2,3]} $\rightarrow 0$
+    \end{itemize}
+  \item Luego se llama a \texttt{contarOcurrencias 2 [1,2,3]}:
+    \begin{itemize}
+      \item \texttt{contarOcurrencias 2 [1,2,3]} $\rightarrow$ \texttt{contarOcurrencias 2 [2,3]} $\rightarrow 1 +$ \texttt{contarOcurrencias 2 [3]} $\rightarrow 0$
+    \end{itemize}
+  \item El resultado es \texttt{[(1,1), (2,1)]}.
+\end{itemize}
+
+\subsection{Ejercicio 3: Optimización con recursión de cola}
+
+Ahora optimizamos la función para usar recursión de cola. Transformamos la función auxiliar \texttt{contarOcurrencias} en una versión con acumulador, y adaptamos la función principal.
+
+\begin{lstlisting}
+-- Función auxiliar optimizada para contar las ocurrencias usando recursión de cola
+contarOcurrenciasCola :: Eq a => a -> [a] -> Int
+contarOcurrenciasCola x lista = contarAux x lista 0
+  where
+    contarAux _ [] acc = acc
+    contarAux x (y:ys) acc
+      | x == y    = contarAux x ys (acc + 1)
+      | otherwise = contarAux x ys acc
+
+-- Función principal optimizada
+ocurrenciasElementosCola :: Eq a => [a] -> [a] -> [(a, Int)]
+ocurrenciasElementosCola _ [] = []
+ocurrenciasElementosCola lista (x:xs) = 
+  (x, contarOcurrenciasCola x lista) : ocurrenciasElementosCola lista xs
+\end{lstlisting}
+
+Por ejemplo, al ejecutar:
+
+\begin{lstlisting}
+-- Ejemplo optimizado:
+-- ocurrenciasElementosCola [1,3,6,2,4,7,3,9,7] [5,2,3]
+-- [(5,0),(2,1),(3,2)]
+\end{lstlisting}
+
+\subsection{Ejercicio 4: Registros de activación en la versión con recursión de cola}
+
+Mostramos los registros de activación para la versión optimizada con la misma llamada \texttt{ocurrenciasElementosCola [1,2,3] [1,2]}.
+
+\begin{itemize}
+  \item \texttt{ocurrenciasElementosCola [1,2,3] [1,2]}
+  \item Se llama a \texttt{contarOcurrenciasCola 1 [1,2,3]}:
+    \begin{itemize}
+      \item \texttt{contarAux 1 [1,2,3] 0} $\rightarrow$ \texttt{contarAux 1 [2,3] 1} $\rightarrow$ \texttt{contarAux 1 [3] 1} $\rightarrow$ \texttt{contarAux 1 [] 1}
+    \end{itemize}
+  \item Luego se llama a \texttt{contarOcurrenciasCola 2 [1,2,3]}:
+    \begin{itemize}
+      \item \texttt{contarAux 2 [1,2,3] 0} $\rightarrow$ \texttt{contarAux 2 [2,3] 0} $\rightarrow$ \texttt{contarAux 2 [3] 1} $\rightarrow$ \texttt{contarAux 2 [] 1}
+    \end{itemize}
+  \item El resultado es \texttt{[(1,1), (2,1)]}.
+\end{itemize}
+
+La función original \texttt{ocurrenciasElementos} fue transformada para utilizar recursión de cola, mejorando la eficiencia en el manejo de registros de activación. Ambas versiones producen los mismos resultados, pero la versión optimizada tiene un mejor manejo de los recursos.
+
+
+\end{document}
